@@ -17,7 +17,7 @@ import time
 import sys
 
 
-from util90b import get_parser, to_dataset
+from util90b import get_parser, to_dataset, get_csv_col
 from permutation_tests import permutation_test
 from chi_square_tests import pass_chi_square_tests
 from mostCommonValue import most_common
@@ -34,11 +34,15 @@ if __name__ == '__main__':
     args = get_parser('IID').parse_args()
     datafile = args.datafile
     bits_per_symbol = int(args.bits_per_symbol)
+    colname = str(args.colname)
     verbose = bool(args.verbose)
 
     with open(datafile, 'rb') as file:
         # Read in raw bytes and convert to list of output symbols
-        bytes_in = bytearray(file.read())
+        if colname is None:
+            bytes_in = bytearray(file.read())
+        else:
+            bytes_in = get_csv_col(file, colname)
         dataset = to_dataset(bytes_in, bits_per_symbol)
         k = len(set(dataset))
         if verbose:

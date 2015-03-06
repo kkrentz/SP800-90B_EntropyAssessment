@@ -16,7 +16,7 @@ import sys
 import time
 import math
 
-from util90b import get_parser, to_dataset, mapData
+from util90b import get_parser, to_dataset, mapData, get_csv_col
 from mostCommonValue import most_common
 from noniid_collision import collision_test
 from markov import markov_test
@@ -40,10 +40,14 @@ if __name__ == '__main__':
     else:
         use_bits = bits_per_symbol
     verbose = bool(args.verbose)
+    colname = str(args.colname)
 
     with open(datafile, 'rb') as file:
         # Read in raw bytes and convert to list of output symbols
-        bytes_in = bytearray(file.read())
+        if colname is None:
+            bytes_in = bytearray(file.read())
+        else:
+            bytes_in = get_csv_col(file, colname)
         dataset = to_dataset(bytes_in, bits_per_symbol)
         k = len(set(dataset))
         if verbose:

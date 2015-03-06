@@ -13,6 +13,7 @@
 
 import argparse
 import bisect
+import csv
 
 # add the command line option parsing details for either the
 # IID, non-IID, or restart tests
@@ -31,6 +32,7 @@ def get_parser(test):
     elif test == 'restart':
         parser.add_argument(dest='H_I', metavar='H_I', help='initial entropy estimate')
         
+    parser.add_argument('-c', '--colname', dest='colname', metavar='colname', help='enables csv and sets column name')
     parser.add_argument('-v', '--verbose', dest='verbose', action='store_true', help='verbose mode: show detailed test results')
 
     return parser
@@ -140,3 +142,19 @@ def get_z(alpha):
                     best = k
             return z_values[best]
                 
+def get_csv_col(file, colname):
+    print(colname)
+    reader = csv.reader(file, delimiter=';')
+    data = list()
+    i = None
+    for row in reader:
+        if i == None:
+            j = 0
+            for col in row:
+                if col == colname:
+                    i = j
+                j = j + 1
+        else:
+            data.append(int(row[i]))
+    
+    return bytearray(data)
